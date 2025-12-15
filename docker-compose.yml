@@ -1,10 +1,11 @@
 version: '3.8'
 
 services:
-  # user-service
+  # USER SERVICE
   user-service:
     build:
-      context: ./user-service
+      context: ../services/user-service
+      dockerfile: Dockerfile
     container_name: horizon-user-service
     ports:
       - "8081:8081"
@@ -20,8 +21,7 @@ services:
       - postgres
       - eureka-server
 
-
-  # PostgreSQL - Core Ledger & User Data
+  # POSTGRES
   postgres:
     image: postgres:14-alpine
     container_name: horizon-postgres
@@ -34,7 +34,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # MongoDB - Budget & Analytics Data
+  # MONGODB
   mongodb:
     image: mongo:latest
     container_name: horizon-mongodb
@@ -43,7 +43,7 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  # Zookeeper - Cần thiết để Kafka hoạt động
+  # ZOOKEEPER
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: horizon-zookeeper
@@ -53,7 +53,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
-  # Kafka - Message Broker chính
+  # KAFKA
   kafka:
     image: confluentinc/cp-kafka:7.4.0
     container_name: horizon-kafka
@@ -64,16 +64,15 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      # Cấu hình quan trọng để Kafka hoạt động trong Docker và máy chủ cục bộ
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  # Eureka Server - Service Discovery
+  #  EUREKA SERVER
   eureka-server:
     build:
       context: ../services/discovery-service
-      dockerfile: ../services/discovery-service/Dockerfile
+      dockerfile: Dockerfile
     container_name: horizon-eureka
     ports:
       - "8761:8761"
