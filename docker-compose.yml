@@ -42,7 +42,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-    command: [ "mongod", "--maxMessageSizeBytes", "67108864" ] # 64 MB
 
   # ZOOKEEPER
   zookeeper:
