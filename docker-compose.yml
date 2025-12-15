@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  # CONFIG SERVER
+  config-server:
+    build:
+      context: ../services/config-server
+      dockerfile: Dockerfile
+    container_name: horizon-config
+    ports:
+      - "8888:8888"
+
   # USER SERVICE
   user-service:
     build:
